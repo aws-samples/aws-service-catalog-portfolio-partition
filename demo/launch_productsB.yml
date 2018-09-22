@@ -1,0 +1,74 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+    Launch the following products -
+    Simple EC Instance
+    Simple EC Instance With Profile
+    Simple S3 Bucket
+    Simple Lambda Function
+
+Resources:
+  lp1:
+    Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
+    Properties:
+      ProvisioningArtifactName: 1.0.1
+      ProductName: "Simple EC Instance"
+      ProvisionedProductName: testProductB001
+      ProvisioningParameters:
+        -
+          Key: KeyName
+          Value: dronen2
+  lp2:
+    Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
+    Properties:
+      ProvisioningArtifactName: 1.0.1
+      ProductName: "Simple EC Instance"
+      ProvisionedProductName: testProductB002
+      ProvisioningParameters:
+        -
+          Key: KeyName
+          Value: dronen2
+  lp3:
+    Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
+    Properties:
+      ProvisioningArtifactName: 1.0.1
+      ProductName: "Simple EC Instance With Profile"
+      ProvisionedProductName: testProductB003
+      ProvisioningParameters:
+        -
+          Key: KeyName
+          Value: dronen2
+  lp4:
+    Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
+    Properties:
+      ProvisioningArtifactName: 1.0.1
+      ProductName: "Simple EC Instance With Profile"
+      ProvisionedProductName: testProductB004
+      ProvisioningParameters:
+        -
+          Key: KeyName
+          Value: dronen2
+  lp5:
+    Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
+    Properties:
+      ProvisioningArtifactName: 1.0.1
+      ProductName: "Simple S3 Bucket"
+      ProvisionedProductName: testProductB005
+  lp6:
+    Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
+    Properties:
+      ProvisioningArtifactName: 1.0.1
+      ProductName: "Simple S3 Bucket"
+      ProvisionedProductName: testProductB006
+  lp7:
+    Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
+    Properties:
+      ProvisioningArtifactName: 1.0.1
+      ProductName: "Simple Lambda Function"
+      ProvisionedProductName: testProductB007
+  lp8:
+    Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
+    Properties:
+      ProvisioningArtifactName: 1.0.1
+      ProductName: "Simple Lambda Function"
+      ProvisionedProductName: testProductB008

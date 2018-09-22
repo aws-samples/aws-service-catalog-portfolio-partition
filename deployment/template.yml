@@ -1,0 +1,152 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+
+Description: Create all prerequisites for the portfolio security boundary solution.
+
+Parameters:
+  LambdaCodeS3Bucket:
+    Description: S3 Bucket Name in which the lambda package stored
+    Type: String
+  LambdaCodeS3Key:
+    Description: S3 Bucket Key of the stored lambda package
+    Type: String
+
+Outputs:
+  BoundaryPhaseAFunctionArn:
+    Description: Lambda function to serve the custom resource of portfolio as security boundary
+    Value: !GetAtt BoundaryPhaseAFunction.Arn
+    Export:
+      Name: BoundaryPhaseAFunctionArn
+
+Resources:
+  BoundaryPhaseAFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: boundary_phase_a.handler
+      Runtime: python3.6
+      Code:
+        S3Bucket: !Ref LambdaCodeS3Bucket
+        S3Key: !Ref LambdaCodeS3Key
+      Description: 'The first of two lambda functions that applies a security boundary
+       around resources which have originated in the same Service Catalog Portfolio'
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt LambdaPhaseARole.Arn
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+          IAM_POLICY_TABLE: !Ref PolicyTable
+  LambdaPhaseARole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'cloudformation:DescribeStacks'
+                  - 'cloudformation:DescribeStackEvents'
+                  - 'cloudformation:DescribeStackResource'
+                  - 'cloudformation:DescribeStackResources'
+                  - 'cloudformation:GetTemplate'
+                  - 'cloudformation:List*'
+                  - 'servicecatalog:*'
+                  - 'iam:*'
+                  - 'dynamodb:*'
+                  - 'ec2:Describe*'
+                  - 'ec2:AssociateIamInstanceProfile'
+                  - 'lambda:UpdateFunctionConfiguration'
+                  - 'lambda:GetFunction*'
+                Resource: '*'
+  BoundaryPhaseBFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: boundary_phase_b.handler
+      Runtime: python3.6
+      Code:
+        S3Bucket: !Ref LambdaCodeS3Bucket
+        S3Key: !Ref LambdaCodeS3Key
+      Description: 'The second of two lambda functions that applies a security boundary
+       around resources which have originated in the same Service Catalog Portfolio'
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt LambdaPhaseBRole.Arn
+      Environment:
+        Variables:
+          LOG_LEVEL: INFO
+          IAM_POLICY_TABLE: !Ref PolicyTable
+  LambdaPhaseBRole:
+    Type: 'AWS::IAM::Role'
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - lambda.amazonaws.com
+            Action:
+              - 'sts:AssumeRole'
+      Path: /
+      Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - 'logs:CreateLogGroup'
+                  - 'logs:CreateLogStream'
+                  - 'logs:PutLogEvents'
+                  - 'cloudformation:DescribeStacks'
+                  - 'cloudformation:DescribeStackEvents'
+                  - 'cloudformation:DescribeStackResource'
+                  - 'cloudformation:DescribeStackResources'
+                  - 'cloudformation:GetTemplate'
+                  - 'cloudformation:List*'
+                  - 'ec2:CreateNetworkInterface'
+                  - 'ec2:DescribeNetworkInterfaces'
+                  - 'ec2:DeleteNetworkInterface'
+                  - 'dynamodb:*'
+                  - 'iam:*'
+                Resource: '*'
+  PolicyTable:
+    Type: 'AWS::DynamoDB::Table'
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: policy
+          AttributeType: S
+        - AttributeName: arn
+          AttributeType: S
+      KeySchema:
+        - AttributeName: policy
+          KeyType: HASH
+        - AttributeName: arn
+          KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 5
+        WriteCapacityUnits: 5
+      StreamSpecification:
+        StreamViewType: NEW_IMAGE
+  PolicyTableEventStream:
+    Type: "AWS::Lambda::EventSourceMapping"
+    Properties:
+        BatchSize: 100
+        EventSourceArn: !GetAtt PolicyTable.StreamArn
+        FunctionName: !GetAtt BoundaryPhaseBFunction.Arn
+        StartingPosition: TRIM_HORIZON

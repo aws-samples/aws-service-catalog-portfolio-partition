@@ -1,0 +1,296 @@
+---
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Describes two sample portfolios which associated with four different products each.
+
+Parameters:
+  TemplatesS3Url:
+    Default: "https://s3.amazonaws.com/sc-security-boundary/Aws-service-catalog-portfolio-boundary/demo/products/"
+    Type: String
+    # https://s3.amazonaws.com/sc-security-boundary/Aws-service-catalog-portfolio-boundary/demo/launch_productsA.yml
+Resources:
+  SamplePortfolioA:
+    Type: "AWS::ServiceCatalog::Portfolio"
+    Properties:
+      AcceptLanguage: en
+      Description: Portfolio for Uranus project
+      DisplayName: Uranus
+      ProviderName: AWS
+      Tags:
+        - Key: Project
+          Value: Uranus
+        - Key: Team
+          Value: SolarSystem
+
+  LaunchRoleAProductSimpleEC2:
+    DependsOn: AssociatePortfolioAProductEC2
+    Type: "AWS::ServiceCatalog::LaunchRoleConstraint"
+    Properties:
+      Description: Launch role constraint for ProductSimpleEC2 in SamplePortfolioA
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioA
+      ProductId: !Ref ProductSimpleEC2
+      RoleArn: !GetAtt LaunchRole.Arn
+  LaunchRoleAProductSimpleEC2WithProfile:
+    DependsOn: AssociatePortfolioAProductEC2WithProfile
+    Type: "AWS::ServiceCatalog::LaunchRoleConstraint"
+    Properties:
+      Description: Launch role constraint for ProductSimpleEC2WithProfile in SamplePortfolioA
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioA
+      ProductId: !Ref ProductSimpleEC2WithProfile
+      RoleArn: !GetAtt LaunchRole.Arn
+  LaunchRoleAProductS3Bucket:
+    DependsOn: AssociatePortfolioAProductS3
+    Type: "AWS::ServiceCatalog::LaunchRoleConstraint"
+    Properties:
+      Description: Launch role constraint for ProductS3Bucket in SamplePortfolioA
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioA
+      ProductId: !Ref ProductS3Bucket
+      RoleArn: !GetAtt LaunchRole.Arn
+  LaunchRoleAProductLambdaFunction:
+    DependsOn: AssociatePortfolioAProductLambda
+    Type: "AWS::ServiceCatalog::LaunchRoleConstraint"
+    Properties:
+      Description: Launch role constraint for ProductLambdaFunction in SamplePortfolioA
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioA
+      ProductId: !Ref ProductLambdaFunction
+      RoleArn: !GetAtt LaunchRole.Arn
+  PortfolioAPrincipal:
+    Type: "AWS::ServiceCatalog::PortfolioPrincipalAssociation"
+    Properties:
+      PrincipalARN: !GetAtt PrincipalA.Arn
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioA
+      PrincipalType: IAM
+  AssociatePortfolioAProductEC2:
+    Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
+    Properties:
+      PortfolioId: !Ref SamplePortfolioA
+      ProductId: !Ref ProductSimpleEC2
+  AssociatePortfolioAProductEC2WithProfile:
+    Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
+    Properties:
+      PortfolioId: !Ref SamplePortfolioA
+      ProductId: !Ref ProductSimpleEC2WithProfile
+  AssociatePortfolioAProductS3:
+    Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
+    Properties:
+      PortfolioId: !Ref SamplePortfolioA
+      ProductId: !Ref ProductS3Bucket
+  AssociatePortfolioAProductLambda:
+    Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
+    Properties:
+      PortfolioId: !Ref SamplePortfolioA
+      ProductId: !Ref ProductLambdaFunction
+
+  SamplePortfolioB:
+    Type: "AWS::ServiceCatalog::Portfolio"
+    Properties:
+      AcceptLanguage: en
+      Description: Portfolio for  Neptune project
+      DisplayName: Neptune
+      ProviderName: AWS
+      Tags:
+        - Key: Project
+          Value: Neptune
+        - Key: Team
+          Value: SolarSystem
+  LaunchRoleBProductSimpleEC2:
+    DependsOn: AssociatePortfolioBProductEC2
+    Type: "AWS::ServiceCatalog::LaunchRoleConstraint"
+    Properties:
+      Description: Launch role constraint for ProductSimpleEC2 in SamplePortfolioB
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioB
+      ProductId: !Ref ProductSimpleEC2
+      RoleArn: !GetAtt LaunchRole.Arn
+  LaunchRoleBProductSimpleEC2WithProfile:
+    DependsOn: AssociatePortfolioBProductEC2WithProfile
+    Type: "AWS::ServiceCatalog::LaunchRoleConstraint"
+    Properties:
+      Description: Launch role constraint for ProductSimpleEC2WithProfile in SamplePortfolioB
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioB
+      ProductId: !Ref ProductSimpleEC2WithProfile
+      RoleArn: !GetAtt LaunchRole.Arn
+  LaunchRoleBProductS3Bucket:
+    DependsOn: AssociatePortfolioBProductS3
+    Type: "AWS::ServiceCatalog::LaunchRoleConstraint"
+    Properties:
+      Description: Launch role constraint for ProductS3Bucket in SamplePortfolioB
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioB
+      ProductId: !Ref ProductS3Bucket
+      RoleArn: !GetAtt LaunchRole.Arn
+  LaunchRoleBProductLambdaFunction:
+    DependsOn: AssociatePortfolioBProductLambda
+    Type: "AWS::ServiceCatalog::LaunchRoleConstraint"
+    Properties:
+      Description: Launch role constraint for ProductLambdaFunction in SamplePortfolioB
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioB
+      ProductId: !Ref ProductLambdaFunction
+      RoleArn: !GetAtt LaunchRole.Arn
+  PortfolioBPrincipal:
+    Type: "AWS::ServiceCatalog::PortfolioPrincipalAssociation"
+    Properties:
+      PrincipalARN: !GetAtt PrincipalB.Arn
+      AcceptLanguage: en
+      PortfolioId: !Ref SamplePortfolioB
+      PrincipalType: IAM
+  AssociatePortfolioBProductEC2:
+    Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
+    Properties:
+      PortfolioId: !Ref SamplePortfolioB
+      ProductId: !Ref ProductSimpleEC2
+  AssociatePortfolioBProductEC2WithProfile:
+    Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
+    Properties:
+      PortfolioId: !Ref SamplePortfolioB
+      ProductId: !Ref ProductSimpleEC2WithProfile
+  AssociatePortfolioBProductS3:
+    Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
+    Properties:
+      PortfolioId: !Ref SamplePortfolioB
+      ProductId: !Ref ProductS3Bucket
+  AssociatePortfolioBProductLambda:
+    Type: "AWS::ServiceCatalog::PortfolioProductAssociation"
+    Properties:
+      PortfolioId: !Ref SamplePortfolioB
+      ProductId: !Ref ProductLambdaFunction
+
+  ProductSimpleEC2:
+    Type: "AWS::ServiceCatalog::CloudFormationProduct"
+    Properties:
+      AcceptLanguage: en
+      Description: Product of simple EC2 Instance
+      Distributor: AWS
+      Name: Simple EC Instance
+      Owner: Engineering Team
+      SupportEmail: support@engineering.com
+      SupportUrl: https://www.engineering.com
+      SupportDescription: For additional support please call 444-3212-0000
+      ProvisioningArtifactParameters:
+        -
+          Description: The first version of this product
+          Name: 1.0.1
+          Info:
+            LoadTemplateFromURL:
+              'Fn::Join':
+                - ''
+                - - !Ref TemplatesS3Url
+                  - ec2/template.yml
+  ProductSimpleEC2WithProfile:
+    Type: "AWS::ServiceCatalog::CloudFormationProduct"
+    Properties:
+      AcceptLanguage: en
+      Description: Product of simple EC2 Instance with attached IAM Instance Profile
+      Distributor: AWS
+      Name: Simple EC Instance With Profile
+      Owner: Engineering Team
+      SupportEmail: support@engineering.com
+      SupportUrl: https://www.engineering.com
+      SupportDescription: For additional support please call 444-3212-0000
+      ProvisioningArtifactParameters:
+        -
+          Description: The first version of this product
+          Name: 1.0.1
+          Info:
+            LoadTemplateFromURL:
+              'Fn::Join':
+                - ''
+                - - !Ref TemplatesS3Url
+                  - ec2_with_profile/template.yml
+  ProductS3Bucket:
+    Type: "AWS::ServiceCatalog::CloudFormationProduct"
+    Properties:
+      AcceptLanguage: en
+      Description: Product contains S3 bucket
+      Distributor: AWS
+      Name: Simple S3 Bucket
+      Owner: Engineering Team
+      SupportEmail: support@engineering.com
+      SupportUrl: https://www.engineering.com
+      SupportDescription: For additional support please call 444-3212-0000
+      ProvisioningArtifactParameters:
+        -
+          Description: The first version of this product
+          Name: 1.0.1
+          Info:
+            LoadTemplateFromURL:
+              'Fn::Join':
+                - ''
+                - - !Ref TemplatesS3Url
+                  - s3/template.yml
+  ProductLambdaFunction:
+    Type: "AWS::ServiceCatalog::CloudFormationProduct"
+    Properties:
+      AcceptLanguage: en
+      Description: Product of lambda function
+      Distributor: AWS
+      Name: Simple Lambda Function
+      Owner: Engineering Team
+      SupportEmail: support@engineering.com
+      SupportUrl: https://www.engineering.com
+      SupportDescription: For additional support please call 444-3212-0000
+      ProvisioningArtifactParameters:
+        -
+          Description: The first version of this product
+          Name: 1.0.1
+          Info:
+            LoadTemplateFromURL:
+              'Fn::Join':
+                - ''
+                - - !Ref TemplatesS3Url
+                  - lambda/template.yml
+
+  LaunchRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          -
+            Effect: Allow
+            Principal:
+              Service: [servicecatalog.amazonaws.com]
+            Action:
+              - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AmazonEC2FullAccess
+        - arn:aws:iam::aws:policy/AWSLambdaFullAccess
+        - arn:aws:iam::aws:policy/IAMFullAccess
+        - arn:aws:iam::aws:policy/AWSServiceCatalogEndUserFullAccess
+
+  PrincipalA:
+    Type: AWS::IAM::User
+    Properties:
+      LoginProfile:
+        Password: myP@ssW0rd
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSServiceCatalogEndUserFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      Path: "/"
+      UserName: scuserUranus
+
+  PrincipalB:
+    Type: AWS::IAM::User
+    Properties:
+      LoginProfile:
+        Password: myP@ssW0rd
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AWSServiceCatalogEndUserFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
+      Path: "/"
+      UserName: scuserNeptun
+
+Outputs:
+  SamplePortfolioA:
+    Value: !Ref SamplePortfolioA
+  SamplePortfolioB:
+    Value: !Ref SamplePortfolioB
+  Cred:
+    Value: myP@ssW0rd

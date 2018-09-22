@@ -1,0 +1,17 @@
+{
+  "Applicable": [
+    "AWS::EC2::Instance",
+    "AWS::Lambda::Function",
+    "AWS::DynamoDB::Table",
+    "AWS::S3::Bucket"
+  ],
+  "NotApplicable": [
+    "Custom::.*",
+    "AWS::IAM::.*",
+    "AWS::CloudFormation::.*",
+    "AWS::Lambda::EventSourceMapping",
+    "AWS::EC2::SecurityGroup",
+    "AWS::Redshift::ClusterSubnetGroup",
+    "AWS::Redshift::Cluster"
+  ]
+}

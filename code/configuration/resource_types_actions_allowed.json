@@ -1,0 +1,12 @@
+{
+    "AWS::EC2::Instance": [
+        "ec2:StopInstances",
+        "ec2:StartInstances"
+    ],
+    "AWS::Lambda::Function": [
+        "lambda:*"
+    ],
+    "AWS::S3::Bucket": [
+        "s3:*"
+    ]
+}
