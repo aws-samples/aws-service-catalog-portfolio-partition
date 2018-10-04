@@ -4,9 +4,9 @@ Description: Describes two sample portfolios which associated with four differen
 
 Parameters:
   TemplatesS3Url:
-    Default: "https://s3.amazonaws.com/sc-security-boundary/Aws-service-catalog-portfolio-boundary/demo/products/"
+    Default: "https://s3.amazonaws.com/sc-security-partition/Aws-service-catalog-portfolio-partition/demo/products/"
     Type: String
-    # https://s3.amazonaws.com/sc-security-boundary/Aws-service-catalog-portfolio-boundary/demo/launch_productsA.yml
+    # https://s3.amazonaws.com/sc-security-partition/Aws-service-catalog-portfolio-partition/demo/launch_productsA.yml
 Resources:
   SamplePortfolioA:
     Type: "AWS::ServiceCatalog::Portfolio"

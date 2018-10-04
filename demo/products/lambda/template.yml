@@ -42,11 +42,11 @@ Resources:
                   - 'logs:CreateLogStream'
                   - 'logs:PutLogEvents'
                 Resource: '*'
-  SetSecurityBoundary:
-    Type: Custom::SetSecurityBoundary
+  SetSecurityPartition:
+    Type: Custom::SetSecurityPartition
     DependsOn: Function
     Properties:
-      ServiceToken: !ImportValue BoundaryPhaseAFunctionArn
+      ServiceToken: !ImportValue PartitionPhaseAFunctionArn
 
 Outputs:
   FunctionName:

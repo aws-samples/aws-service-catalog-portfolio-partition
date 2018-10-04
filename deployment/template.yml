@@ -1,7 +1,7 @@
 ---
 AWSTemplateFormatVersion: '2010-09-09'
 
-Description: Create all prerequisites for the portfolio security boundary solution.
+Description: Create all prerequisites for the portfolio security partition solution.
 
 Parameters:
   LambdaCodeS3Bucket:
@@ -12,22 +12,22 @@ Parameters:
     Type: String
 
 Outputs:
-  BoundaryPhaseAFunctionArn:
-    Description: Lambda function to serve the custom resource of portfolio as security boundary
-    Value: !GetAtt BoundaryPhaseAFunction.Arn
+  PartitionPhaseAFunctionArn:
+    Description: Lambda function to serve the custom resource of portfolio as security partition
+    Value: !GetAtt PartitionPhaseAFunction.Arn
     Export:
-      Name: BoundaryPhaseAFunctionArn
+      Name: PartitionPhaseAFunctionArn
 
 Resources:
-  BoundaryPhaseAFunction:
+  PartitionPhaseAFunction:
     Type: 'AWS::Lambda::Function'
     Properties:
-      Handler: boundary_phase_a.handler
+      Handler: partition_phase_a.handler
       Runtime: python3.6
       Code:
         S3Bucket: !Ref LambdaCodeS3Bucket
         S3Key: !Ref LambdaCodeS3Key
-      Description: 'The first of two lambda functions that applies a security boundary
+      Description: 'The first of two lambda functions that applies a security partition
        around resources which have originated in the same Service Catalog Portfolio'
       MemorySize: 128
       Timeout: 30
@@ -73,15 +73,15 @@ Resources:
                   - 'lambda:UpdateFunctionConfiguration'
                   - 'lambda:GetFunction*'
                 Resource: '*'
-  BoundaryPhaseBFunction:
+  PartitionPhaseBFunction:
     Type: 'AWS::Lambda::Function'
     Properties:
-      Handler: boundary_phase_b.handler
+      Handler: partition_phase_b.handler
       Runtime: python3.6
       Code:
         S3Bucket: !Ref LambdaCodeS3Bucket
         S3Key: !Ref LambdaCodeS3Key
-      Description: 'The second of two lambda functions that applies a security boundary
+      Description: 'The second of two lambda functions that applies a security partition
        around resources which have originated in the same Service Catalog Portfolio'
       MemorySize: 128
       Timeout: 30
@@ -148,5 +148,5 @@ Resources:
     Properties:
         BatchSize: 100
         EventSourceArn: !GetAtt PolicyTable.StreamArn
-        FunctionName: !GetAtt BoundaryPhaseBFunction.Arn
+        FunctionName: !GetAtt PartitionPhaseBFunction.Arn
         StartingPosition: TRIM_HORIZON

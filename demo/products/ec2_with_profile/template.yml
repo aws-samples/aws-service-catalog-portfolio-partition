@@ -187,11 +187,11 @@ Resources:
                   - 'servicecatalog:*'
                 Resource: '*'
 
-  SetSecurityBoundary:
-    Type: Custom::SetSecurityBoundary
+  SetSecurityPartition:
+    Type: Custom::SetSecurityPartition
     DependsOn: EC2Instance
     Properties:
-      ServiceToken: !ImportValue BoundaryPhaseAFunctionArn
+      ServiceToken: !ImportValue PartitionPhaseAFunctionArn
 
 Outputs:
   InstanceId:

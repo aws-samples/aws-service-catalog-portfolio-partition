@@ -26,11 +26,11 @@ Resources:
                 - !Ref S3Bucket
                 - /*
       Bucket: !Ref S3Bucket
-  SetSecurityBoundary:
+  SetSecurityPartition:
     DependsOn: BucketPolicy
-    Type: Custom::SetSecurityBoundary
+    Type: Custom::SetSecurityPartition
     Properties:
-      ServiceToken: !ImportValue BoundaryPhaseAFunctionArn
+      ServiceToken: !ImportValue PartitionPhaseAFunctionArn
 
 Outputs:
   WebsiteURL:

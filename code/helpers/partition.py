@@ -25,7 +25,7 @@ from helpers.defaults import BASE_POLICY
 from helpers.defaults import BASE_TRUST_POLICY
 
 
-class Boundary(object):
+class Partition(object):
 
     def __init__(self, portfolio_id, table_name):
         self.table = Table(table_name)

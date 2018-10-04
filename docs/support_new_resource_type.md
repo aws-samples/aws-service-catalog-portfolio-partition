@@ -1,12 +1,12 @@
 # Supporting new Resource Types
-When it comes to IAM, each AWS resource type might have a different behavior. Moreover, there are resource types which are actively accessing other resources and thus might assume roles (e.g., ec2 instance, lambda function) while others are more passive (e.g., s3, dynamoDB). To handle the different resources, the portfolio security boundary implementation maintain a whitelist of supported resource types. In addition, to be supported, each resource type must implement the resources/base.py interface.
+When it comes to IAM, each AWS resource type might have a different behavior. Moreover, there are resource types which are actively accessing other resources and thus might assume roles (e.g., ec2 instance, lambda function) while others are more passive (e.g., s3, dynamoDB). To handle the different resources, the portfolio security partition implementation maintain a whitelist of supported resource types. In addition, to be supported, each resource type must implement the resources/base.py interface.
 The following document is a step by step guide for adding support for unsupported resource type.
 
 ## Add support to "AWS::ServiceX::ResY"
 To demonstrate the process, we will add a fake aws resource: "AWS::ServiceX::ResY"
 
 #### Add the new resource type to the whitelist:
-Aws-service-catalog-portfolio-boundary/code/configuration/resource_types_supported.json
+Aws-service-catalog-portfolio-partition/code/configuration/resource_types_supported.json
 ```json
 {
  "Applicable": [
@@ -31,11 +31,11 @@ Aws-service-catalog-portfolio-boundary/code/configuration/resource_types_support
 If a resource type appears in the “Applicable” list it will be processed regardless its status in the “NotApplicable” list.
 
 #### The Interface:
-Aws-service-catalog-portfolio-boundary/code/helpers/resources/base.py
+Aws-service-catalog-portfolio-partition/code/helpers/resources/base.py
 
 Create new file:
 ```bash
-Aws-service-catalog-portfolio-boundary/code/helpers/resources/servicex_resy.py
+Aws-service-catalog-portfolio-partition/code/helpers/resources/servicex_resy.py
 ```
 ```python
 from helpers.resources.base import Base
@@ -85,4 +85,4 @@ class ServicexResy(Base):
 
 #### Lambda Functions Permissions
 The permissions of the lambda functions' execution role must be updated with new allowed actions used in the new resource type object implementation. 
-This should be done by updating the Aws-service-catalog-portfolio-boundary/deployment/template.yml and update the relevant CFN stack.
+This should be done by updating the Aws-service-catalog-portfolio-partition/deployment/template.yml and update the relevant CFN stack.

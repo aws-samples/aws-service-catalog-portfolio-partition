@@ -17,7 +17,7 @@
 import os
 from helpers import custom_resource_handler
 from helpers.stack import Stack
-from helpers.boundary import Boundary
+from helpers.partition import Partition
 from helpers.resources_generator import ResourcesGenerator
 from helpers.defaults import PORTFOLIO_ID_TAG
 
@@ -32,9 +32,9 @@ def add(event, context):
     portfolio_arn = stack.tag(PORTFOLIO_ID_TAG, exception=True)
     portfolio_id = portfolio_arn.split('/')[-1]
 
-    boundary = Boundary(portfolio_id, TABLE)
+    partition = Partition(portfolio_id, TABLE)
     resources_generator = ResourcesGenerator(stack.stack_resources()).generator()
-    boundary.include(resources_generator)
+    partition.include(resources_generator)
 
     return {}
 
@@ -46,10 +46,10 @@ def modify(event, context):
     portfolio_arn = stack.tag(PORTFOLIO_ID_TAG, exception=True)
     portfolio_id = portfolio_arn.split('/')[-1]
 
-    boundary = Boundary(portfolio_id, TABLE)
+    partition = Partition(portfolio_id, TABLE)
     resources_generator = ResourcesGenerator(stack.stack_resources()).generator()
-    boundary.include(resources_generator)
-    boundary.exclude(resources_generator)
+    partition.include(resources_generator)
+    partition.exclude(resources_generator)
 
     return {}
 
@@ -60,8 +60,8 @@ def remove(event, context):
     portfolio_arn = stack.tag(PORTFOLIO_ID_TAG, exception=True)
     portfolio_id = portfolio_arn.split('/')[-1]
 
-    boundary = Boundary(portfolio_id, TABLE)
+    partition = Partition(portfolio_id, TABLE)
     resources_generator = ResourcesGenerator(stack.stack_resources()).generator()
-    boundary.exclude(resources_generator)
+    partition.exclude(resources_generator)
 
     return {}
