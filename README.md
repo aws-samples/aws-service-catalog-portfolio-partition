@@ -101,7 +101,7 @@ SetSecurityPartition:
    Properties:
      ServiceToken: !ImportValue PartitionPhaseAFunctionArn
 ```
-    Note that the **DependsOn** attribute should include the logical name of the resources, such that the custom resource will be the last to be provisioned. 
+Note that the **DependsOn** attribute should include the logical name of the resources, such that the custom resource will be the last to be provisioned. 
 ## Customize the Security Partition
 For additional control when you define the security partition, the permitted actions per resource type, within the Portfolio Policy, are configurable. For that we use configuration file which is located under Aws-service-catalog-portfolio-partition/code/configuration/resource_types_actions_allowed.json
 Allowed actions per resource type:
