@@ -5,9 +5,12 @@ Application related resources will be able to communicate using AWS API calls, b
 issue AWS API calls to resources out of the application scope.
 To learn more you can read [the blog post](https://aws.amazon.com/blogs/mt/create-a-security-partition-for-your-applications-using-aws-service-catalog-and-aws-lambda/).
 
-![Security Partition Solution Flow](./docs/images/concept.jpg)
+![Security Partition Solution Flow](./docs/images/concept.png)
 
 ## Architecture and Flow
+
+![Security Partition Architecture](./docs/images/architecture.png)
+
 As a service catalog product is launched, CloudFormation stack is created based on the product’s CloudFormation template.
 Once all the resources are provisioned a final custom resource will invoke the “phase a” lambda function to execute the logic of the security partition.
 Phase A lambda inquires for the provisioned resources and their provisioning status. 
@@ -16,12 +19,11 @@ Finally, it updates the DynamoDB table with new items which includes portfolio i
 When the DynamoDB table is updated, DynamoDB stream invokes the “phase b” lambda function. 
 The latter creates new Portfolio Policy version, according to the current information in the table, and set it to be the default version.
 
-![Security Partition Solution Flow](./docs/flow.png)
+![Security Partition Solution Flow](./docs/images/flow.png)
 
 Currently, the solution supports a limited set of resource types:
    - "AWS::EC2::Instance"
    - "AWS::Lambda::Function"
-   - "AWS::DynamoDB::Table"
    - "AWS::S3::Bucket"
    
 See instructions for adding support for other resource types [Adding support for new resource types](docs/support_new_resource_type.md)
@@ -32,19 +34,18 @@ Use the CloudFormation template to deploy the required AWS resources:
 - AWS Lambda Function triggered by DynamoDB Stream
 - AWS Lambda Function triggered by CFN custom resource
 
-![Deployed resources](./docs/cfn_deployment.png)
-1. Clone Aws-service-catalog-portfolio-partition repository
+1. Clone aws-service-catalog-portfolio-partition repository
 1. Package the lambda functions code ([see documentation for creating lambda package](https://docs.aws.amazon.com/lambda/latest/dg/lambda-python-how-to-create-deployment-package.html)) and upload the resulted zip file to a S3 bucket.
     ```bash
-    cd Aws-service-catalog-portfolio-partition/code/
+    cd aws-service-catalog-portfolio-partition/code/
     zip -r ../code.zip .
     aws s3 cp ../code.zip s3://<Bucket Name>/
     ```
-1. Use either the [AWS console](https://console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/new?stackName=sc-portfolio-partition&templateURL=https://s3.amazonaws.com/blog-service-catalog-security-partition-may1st2018/template.yml) or aws cli to create stack with the CloudFormation template. 
+1. Use aws cli to create stack with the CloudFormation template.
 Find the CloudFormation template, template.yml, under the deployment folder.
 When creating the stack, supply the S3 bucket name and S3 key name of the Lambda functions package. 
     ```bash
-    cd Aws-service-catalog-portfolio-partition/deployment/
+    cd aws-service-catalog-portfolio-partition/deployment/
     aws cloudformation create-stack --stack-name sc-security-partition --template-body file://template.yml --parameters ParameterKey=LambdaCodeS3Bucket,ParameterValue=<BucketName> ParameterKey=LambdaCodeS3Key,ParameterValue=<KeyName>  --capabilities CAPABILITY_IAM
     ```
     This template will provision 2 Lambda Functions and a DynamoDB Table. The ARN of the “phase a” lambda function will be exported to be consumed by the SetSecurityPartition custom resource.
@@ -81,6 +82,8 @@ When creating the stack, supply the S3 bucket name and S3 key name of the Lambda
         Properties:
           Description: 'The second of two lambda functions that applies a security partition
            around resources which have originated in the same Service Catalog Portfolio'
+      LambdaPhaseBRole:
+        Type: 'AWS::IAM::Role'
       PolicyTable:
         Type: 'AWS::DynamoDB::Table'
       PolicyTableEventStream:
@@ -89,16 +92,8 @@ When creating the stack, supply the S3 bucket name and S3 key name of the Lambda
             FunctionName: !GetAtt PartitionPhaseBFunction.Arn
     ```
 ## Portfolios and Products Onboarding
-To apply the security partition on a new created portfolio, you will have to add a tag option to it and to revise your products to include the SetSecurityPartition custom resource.
-1. Add tag option to the portfolio:
-    ```bash
-    name=<NAME>
-    portfolioid=`aws servicecatalog list-portfolios --output text --query "PortfolioDetails[?DisplayName=='$name'].Id|[0]"`
-    tagid=`aws servicecatalog create-tag-option --key PortfolioId --value $portfolioid --output text --query "TagOptionDetail.Id"`
-    aws servicecatalog associate-tag-option-with-resource --resource-id $portfolioid --tag-option-id $tagid 
-    ```
-    Be sure to replace the \<NAME\> with your portfolio name.
-1. For each product associated with the portfolio, its CloudFormation template should be modified to include the custom resource in the following format:
+To apply the security partition on a new created portfolio, you will have to revise your products to include the SetSecurityPartition custom resource.
+For each product associated with the portfolio, its CloudFormation template should be modified to include the custom resource in the following format:
     ```yaml
     SetSecurityPartition:
        Type: Custom::SetSecurityPartition
@@ -112,24 +107,29 @@ For additional control when you define the security partition, the permitted act
 Allowed actions per resource type:
 ```json
 {
- "AWS::EC2::Instance": ["ec2:Describe*"],
- "AWS::Lambda::Function": ["lambda:*"]
+    "AWS::EC2::Instance": [
+        "ec2:StopInstances",
+        "ec2:StartInstances"
+    ],
+    "AWS::Lambda::Function": [
+        "lambda:*"
+    ],
+    "AWS::S3::Bucket": [
+        "s3:*"
+    ]
 }
 ```
 For a resource type not listed, the default value will be "\*".
 
 ## Supported Resource Types
 When it comes to IAM, each AWS resource type might have a different behavior. Moreover, there are resource types which are actively accessing other resources and thus might assume roles (e.g., ec2 instance, lambda function) while others are more passive (e.g., s3, dynamoDB). To handle the different resources, the portfolio security partition implementation maintain a whitelist of supported resource types. In addition, to be supported, each resource type must implement the resources/base.py interface.
-Please find detailed instructions in the git repository documentation. 
+Please find detailed instructions [here](./docs/support_new_resource_type.md) in the git repository documentation.
 Once a new resource type is whitelisted and has an implemented object, the lambda functions permissions must be updated to be allowed with the new required actions. Those actions may be concluded from the api calls been used within the new implemented object.
 Following are the current supported resource types:
 ```json
 "AWS::EC2::Instance",
 "AWS::Lambda::Function",
-"AWS::DynamoDB::Table",
 "AWS::S3::Bucket"
 ```
-
 ## License Summary
-
 This sample code is made available under a modified MIT license. See the LICENSE file.

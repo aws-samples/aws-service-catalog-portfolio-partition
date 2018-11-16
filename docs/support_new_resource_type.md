@@ -31,11 +31,11 @@ Aws-service-catalog-portfolio-partition/code/configuration/resource_types_suppor
 If a resource type appears in the “Applicable” list it will be processed regardless its status in the “NotApplicable” list.
 
 #### The Interface:
-Aws-service-catalog-portfolio-partition/code/helpers/resources/base.py
+`code/helpers/resources/base.py`
 
 Create new file:
 ```bash
-Aws-service-catalog-portfolio-partition/code/helpers/resources/servicex_resy.py
+aws-service-catalog-portfolio-partition/code/helpers/resources/servicex_resy.py
 ```
 ```python
 from helpers.resources.base import Base
