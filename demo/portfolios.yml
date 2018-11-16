@@ -4,9 +4,9 @@ Description: Describes two sample portfolios which associated with four differen
 
 Parameters:
   TemplatesS3Url:
-    Default: "https://s3.amazonaws.com/sc-security-partition/Aws-service-catalog-portfolio-partition/demo/products/"
+    Default: "https://s3.amazonaws.com/sc-security-partition/demo/products/"
     Type: String
-    # https://s3.amazonaws.com/sc-security-partition/Aws-service-catalog-portfolio-partition/demo/launch_productsA.yml
+    # https://s3.amazonaws.com/sc-security-partition/demo/launch_productsA.yml
 Resources:
   SamplePortfolioA:
     Type: "AWS::ServiceCatalog::Portfolio"
@@ -263,13 +263,13 @@ Resources:
         - arn:aws:iam::aws:policy/AmazonEC2FullAccess
         - arn:aws:iam::aws:policy/AWSLambdaFullAccess
         - arn:aws:iam::aws:policy/IAMFullAccess
-        - arn:aws:iam::aws:policy/AWSServiceCatalogEndUserFullAccess
+        - arn:aws:iam::aws:policy/AdministratorAccess
 
   PrincipalA:
     Type: AWS::IAM::User
     Properties:
       LoginProfile:
-        Password: myP@ssW0rd
+        Password: myPassword
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSServiceCatalogEndUserFullAccess
         - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess
@@ -280,7 +280,7 @@ Resources:
     Type: AWS::IAM::User
     Properties:
       LoginProfile:
-        Password: myP@ssW0rd
+        Password: myPassword
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/AWSServiceCatalogEndUserFullAccess
         - arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess

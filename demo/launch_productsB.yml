@@ -17,7 +17,7 @@ Resources:
       ProvisioningParameters:
         -
           Key: KeyName
-          Value: dronen2
+          Value: sc-demo-key-pair
   lp2:
     Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
     Properties:
@@ -27,7 +27,7 @@ Resources:
       ProvisioningParameters:
         -
           Key: KeyName
-          Value: dronen2
+          Value: sc-demo-key-pair
   lp3:
     Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
     Properties:
@@ -37,7 +37,7 @@ Resources:
       ProvisioningParameters:
         -
           Key: KeyName
-          Value: dronen2
+          Value: sc-demo-key-pair
   lp4:
     Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
     Properties:
@@ -47,7 +47,7 @@ Resources:
       ProvisioningParameters:
         -
           Key: KeyName
-          Value: dronen2
+          Value: sc-demo-key-pair
   lp5:
     Type: "AWS::ServiceCatalog::CloudFormationProvisionedProduct"
     Properties:

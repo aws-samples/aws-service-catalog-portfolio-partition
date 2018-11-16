@@ -3,7 +3,7 @@ The repository includes python3 AWS Lambda function code and a CFN template to d
 The AWS Lambda function automates the application infrastructure separation for each application that is provisioned via AWS Service Catalog portfolio.
 Application related resources will be able to communicate using AWS API calls, between themselves, while being banned to
 issue AWS API calls to resources out of the application scope.
-To learn more you can read [the blog post](https://amazon.awsapps.com/workdocs/index.html#/document/d00c450786d13834a4266ebd074fdafd04486a3c3b2f4381030ddc8c06e4fbea).
+To learn more you can read [the blog post](https://aws.amazon.com/blogs/mt/create-a-security-partition-for-your-applications-using-aws-service-catalog-and-aws-lambda/).
 
 ![Security Partition Solution Flow](./docs/images/concept.jpg)
 
