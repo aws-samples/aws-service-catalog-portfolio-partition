@@ -1,7 +1,7 @@
 #!/bin/bash
 
-profile=dronen2
-region=us-east-1
+profile=$2
+region=$3
 keypair=sc-demo-key-pair
 bucketname=service-catalog-portfolio-security-partition-$region
 
@@ -31,10 +31,21 @@ if [ $1 = 'destroy' ]
 then
     aws --profile $profile --region $region cloudformation \
         delete-stack \
-        --stack-name SC-neptun-launch-products
+        --stack-name SC-Neptun-launch-products
     aws --profile $profile --region $region cloudformation \
         delete-stack \
-        --stack-name SC-uranus-launch-products
+        --stack-name SC-Uranus-launch-products
+
+    pplist=`aws --profile $profile --region $region servicecatalog scan-provisioned-products --access-level-filter Key=Account,Value=self --query "ProvisionedProducts[].Id" --output text`
+    for pp in $pplist
+    do
+        aws --profile $profile --region $region servicecatalog terminate-provisioned-product --provisioned-product-id $pp --ignore-errors
+    done
+    stacklist=`aws --profile $profile --region $region cloudformation list-stacks --stack-status-filter CREATE_FAILED CREATE_COMPLETE ROLLBACK_IN_PROGRESS --query "StackSummaries[].StackName | [?contains(@, 'SC-')]" --output text`
+    for st in $stacklist
+    do
+        aws --profile $profile --region $region cloudformation delete-stack --stack-name $st
+    done
     aws --profile $profile --region $region cloudformation \
         delete-stack \
         --stack-name portfolios
@@ -43,4 +54,5 @@ then
         --stack-name security-partition-solution
     aws --profile $profile --region $region s3 rb s3://$bucketname --force
     aws --profile $profile --region $region ec2 delete-key-pair --key-name $keypair
+
 fi

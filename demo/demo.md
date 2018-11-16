@@ -1,7 +1,7 @@
 1. Run demo.sh:
 ```
 cd aws-service-catalog-portfolio-security-partition/
-./demo/demo.sh build
+./demo/demo.sh build my-aws-profile  us-east-1
 ```
 1. console login as scuserUranus
 create stack with
@@ -14,5 +14,5 @@ name: SC-Neptun-launch-products
 1. Cleanup: to delete all resources:
 ```
 cd aws-service-catalog-portfolio-security-partition/
-./demo/demo.sh destroy
+./demo/demo.sh destroy my-aws-profile  us-east-1
 ```

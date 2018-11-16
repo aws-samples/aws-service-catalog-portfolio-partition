@@ -14,6 +14,7 @@
  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 '''
 
+from botocore.exceptions import ClientError
 from helpers.logger import logger
 from helpers.utils.session import Session
 from helpers.utils.catch_error import client_error_ignore
@@ -33,12 +34,18 @@ class Roles(object):
         return aro.arn
 
     def create(self, path, name, base_trust_policy):
-        response = self.iam_client.create_role(
-            Path='/{}/'.format(path),
-            RoleName=name,
-            AssumeRolePolicyDocument=base_trust_policy,
-            Description='Assumed by resources provisioned by products \
-             associated with Service Catalog Portfolio {}'.format(name)
-        )
-        logger.debug('Role created: {}'.format(name))
-        return response['Role']['Arn']
+        try:
+            response = self.iam_client.create_role(
+                Path='/{}/'.format(path),
+                RoleName=name,
+                AssumeRolePolicyDocument=base_trust_policy,
+                Description='Assumed by resources provisioned by products \
+                 associated with Service Catalog Portfolio {}'.format(name)
+            )
+            logger.debug('Role created: {}'.format(name))
+            return response['Role']['Arn']
+        except ClientError as err:
+                if err.response['Error']['Code'] == 'EntityAlreadyExists':
+                    return self.find(name)
+                else:
+                    raise err
