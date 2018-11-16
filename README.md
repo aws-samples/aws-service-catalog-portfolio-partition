@@ -94,13 +94,13 @@ When creating the stack, supply the S3 bucket name and S3 key name of the Lambda
 ## Portfolios and Products Onboarding
 To apply the security partition on a new created portfolio, you will have to revise your products to include the SetSecurityPartition custom resource.
 For each product associated with the portfolio, its CloudFormation template should be modified to include the custom resource in the following format:
-    ```yaml
-    SetSecurityPartition:
-       Type: Custom::SetSecurityPartition
-       DependsOn: <List of all the Logical Resources Names provisioned in this template>
-       Properties:
-         ServiceToken: !ImportValue PartitionPhaseAFunctionArn
-    ```
+```yaml
+SetSecurityPartition:
+   Type: Custom::SetSecurityPartition
+   DependsOn: <List of all the Logical Resources Names provisioned in this template>
+   Properties:
+     ServiceToken: !ImportValue PartitionPhaseAFunctionArn
+```
     Note that the **DependsOn** attribute should include the logical name of the resources, such that the custom resource will be the last to be provisioned. 
 ## Customize the Security Partition
 For additional control when you define the security partition, the permitted actions per resource type, within the Portfolio Policy, are configurable. For that we use configuration file which is located under Aws-service-catalog-portfolio-partition/code/configuration/resource_types_actions_allowed.json
